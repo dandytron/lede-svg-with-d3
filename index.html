@@ -16,23 +16,80 @@
     <link rel="stylesheet" href="base.css">
     <link rel="stylesheet" href="custom.css">
 
-    <!-- Step 2: add your d3 script below -->
+    <!-- Step 2: add your d3 script below, can do import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 
   </head>
   <body>
-    <h1>CHART TITLE</h1>
-    <p>DESCRIPTION</p>
+    <h1>For Bezos, that wedding was barely pocket change</h1>
+    <p>This is how much Bezos <span style="color:red;font-weight: bold;">spent on his wedding</span> relative 
+      to <span style="color:#999;font-weight: bold;">his wealth</span> as compared to an average American.</p>
     <div id="my-svg-chart"></div>
 
     <!-- your JS code that uses d3 to manipulate data -->
     <script>
 
       // Step 3. add data variables
+      // unit in million
+      const bezosCost = 56,// 56, 
+            bezosWealth = 236000,// 236000,
+            averageCost = 7375,// 0.033, 
+            averageWealth = 236000// 0.1929;
+           
+
       // Step 4. transform data into usable scales
-      // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
-      // Step 6. create SVG shapes binded with data, using d3.selectAll().data().join()
-      // Step 7. tweak the attributes of the SVG shapes to position them at the right places
+      // let's assume we want the max radius of the circles to be 100
+      const scaleRadius = d3.scaleSqrt().domain([0, bezosWealth]).range([0, 100]);
+
       // Step 8. color the SVG shapes using style attributes
+
+      // Step 5. create an SVG container inside #my-svg-chart using d3.select().append()
+      // Create shapes that you want to bind your data to, and bind the data to them. You will be using d3.selectAll().data().join().
+
+      const width = 640,
+            height = 640;
+
+      const myChart = d3
+        .select('#my-svg-chart')
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height)
+
+      // Step 6. create SVG shapes binded with data, using d3.selectAll().data().join()
+      const circles = myChart
+        .selectAll('circle')
+        .data([bezosWealth, bezosCost, averageWealth, averageCost])
+        .join('circle');
+
+      // Step 7. position the SVG shapes at the right places
+      circles
+        .attr('cx', function(d,i) {
+          // i == 0 : BezosCost, i == 1 : BezosWealth
+          if (i < 2) {return 100}
+          else {return 300}
+        })
+        .attr('cy', 100)
+        .attr('r', (d) => scaleRadius(d))
+
+      // Step 8. color the SVG shapes using style attributes
+      circles
+        .style('fill', function(d,i) {
+          return i%2 == 0 ? '#ccc' : 'red'
+        })
+      
+      // Step 9. Add labels
+      myChart.append('text')
+        .attr('x', 100)
+        .attr('y', 220)
+        .text('Bezos')
+        .style('text-anchor','middle')
+
+      myChart.append('text')
+        .attr('x', 300)
+        .attr('y', 220)
+        .text('Average American')
+        .style('text-anchor','middle')
+
 
     </script>
 
